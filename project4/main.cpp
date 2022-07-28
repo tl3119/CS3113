@@ -223,8 +223,8 @@ void initialise()
     state.enemies[2].set_ai_state(IDLE);
 
     state.enemies[0].speed = 0.5f;
-    state.enemies[1].speed = 0.2f;
-    state.enemies[2].speed = 1.0f;
+    state.enemies[1].speed = 0.4f;
+    state.enemies[2].speed = 0.5f;
 
     state.enemies[0].set_ai_type(WALKER);
     state.enemies[1].set_ai_type(PATROLLER);
@@ -371,9 +371,7 @@ void update()
 
         for (int i = 0; i < ENEMY_COUNT; i++) state.enemies[i].update(FIXED_TIMESTEP, state.player, state.platforms, PLATFORM_COUNT);
         for (int i = 0; i < ENEMY_COUNT; i++) {
-            if (state.enemies[i].get_ai_type() != GUARD) {
-                state.enemies[i].update(FIXED_TIMESTEP, state.enemies, state.player, 1);
-            }
+            state.enemies[i].update(FIXED_TIMESTEP, state.enemies, state.player, 1);
         }
         //to do: make sure enemies can not move
 
@@ -492,7 +490,9 @@ int main(int argc, char* argv[])
     while (game_is_running)
     {
         process_input();
-        update();
+        if (losegame == false) {
+            update();
+        }
         render();
     }
 
