@@ -20,7 +20,7 @@
 #endif
 
 enum EntityType { PLATFORM, PLAYER, ENEMY };
-enum AIType { WALKER, GUARD, PATROLLER};
+enum AIType { WALKER, GUARD, PATROLLER };
 enum AIState { WALKING, IDLE, WALKING_ANOTHER_WAY };
 
 class Entity

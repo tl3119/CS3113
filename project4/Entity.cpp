@@ -70,7 +70,7 @@ void Entity::activate_ai(Entity* player)
     case GUARD:
         ai_guard(player);
         break;
-        
+
     case PATROLLER:
         ai_patroller();
         break;
@@ -145,14 +145,14 @@ void Entity::update(float delta_time, Entity* player, Entity* collidable_entitie
         collided_left = false;
         collided_right = false;
     }
-    
+
     if (player != nullptr && player->entity_type == ENEMY && collidable_entities != nullptr && collidable_entities->entity_type != PLAYER) {
         collided_top = false;
         collided_bottom = false;
         collided_left = false;
         collided_right = false;
     }
-    
+
     if (collidable_entities == nullptr) {
         collided_top = false;
         collided_bottom = false;
@@ -162,7 +162,7 @@ void Entity::update(float delta_time, Entity* player, Entity* collidable_entitie
 
     // 可能要改
     if (entity_type == ENEMY && player->entity_type == PLAYER && player->speed != 0) activate_ai(player);
-    else if (entity_type == ENEMY && player->entity_type == ENEMY) activate_ai(player);
+    //else if (entity_type == ENEMY && player->entity_type == ENEMY) activate_ai(player);
 
     if (entity_type == PLAYER) {
         if (animation_indices != NULL)
