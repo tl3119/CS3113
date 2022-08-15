@@ -4,7 +4,7 @@
 enum EntityType { PLATFORM, PLAYER, ENEMY, NONE };
 enum AIType { WALKER, GUARD, PATROLLER, TOP_DOWN_PATROLLER, NEW_WALKER };
 enum AIState { WALKING, IDLE, WALKING_ANOTHER_WAY };
-enum DiffLevel {level1, level2, level3, level4};
+enum DiffLevel { level1, level2, level3, level4, level5 };
 
 class Entity
 {

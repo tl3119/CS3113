@@ -28,6 +28,7 @@
 #include "LevelB.h"
 #include "LevelC.h"
 #include "LevelD.h"
+#include "LevelE.h"
 #include "Menu.h"
 
 /**
@@ -59,8 +60,9 @@ LevelA* levelA;
 LevelB* levelB;
 LevelC* levelC;
 LevelD* levelD;
+LevelE* levelE;
 Menu* menu;
-Scene* levels[5];
+Scene* levels[6];
 
 SDL_Window* display_window;
 bool game_is_running = true;
@@ -111,12 +113,14 @@ void initialise()
     levelB = new LevelB();
     levelC = new LevelC();
     levelD = new LevelD();
+    levelE = new LevelE();
     menu = new Menu();
     levels[0] = menu;
     levels[1] = levelA;
     levels[2] = levelB;
     levels[3] = levelC;
     levels[4] = levelD;
+    levels[5] = levelE;
 
     // Start at level A
     levels[0]->state.number_of_lives = 3;
@@ -228,12 +232,16 @@ void process_input()
     }
     else if (key_state[SDL_SCANCODE_UP])
     {
-        current_scene->state.player->movement.y = 1.0f;
+        if (current_scene->state.player->this_level != level1) {
+            current_scene->state.player->movement.y = 1.0f;
+        }
         current_scene->state.player->animation_indices = current_scene->state.player->walking[current_scene->state.player->UP];
     }
     else if (key_state[SDL_SCANCODE_DOWN])
     {
-        current_scene->state.player->movement.y = -1.0f;
+        if (current_scene->state.player->this_level != level1) {
+            current_scene->state.player->movement.y = -1.0f;
+        }
         current_scene->state.player->animation_indices = current_scene->state.player->walking[current_scene->state.player->DOWN];
     }
 
@@ -272,7 +280,7 @@ void update()
     if (current_scene->state.player->get_position().y > -1.0) {
         view_matrix = glm::translate(view_matrix, glm::vec3(-5, -current_scene->state.player->get_position().y, 0));
     }
-    else if(current_scene->state.player->get_position().y < -7.0){
+    else if (current_scene->state.player->get_position().y < -7.0) {
         view_matrix = glm::translate(view_matrix, glm::vec3(-5, -current_scene->state.player->get_position().y, 0));
     }
     else {
@@ -298,6 +306,7 @@ void shutdown()
     delete levelA;
     delete levelB;
     delete levelC;
+    delete levelD;
     delete menu;
 }
 

@@ -8,7 +8,7 @@ GLuint font_texture_id4;
 
 unsigned int LEVELD_DATA[] =
 {
-   0, 0, 0, 0, 0, 0, 92, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0,94,
    0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
    0, 0, 0, 0, 0, 0, 0, 1, 0, 0,
    0, 0, 0, 0, 0, 0, 1, 0, 0, 0,
@@ -82,7 +82,7 @@ void LevelD::initialise()
 
 void LevelD::update(float delta_time) {
     this->state.player->update(delta_time, state.player, state.enemies, this->ENEMY_COUNT, this->state.map);
-    if (this->state.player->get_position().x >= 4.5f && this->state.player->get_position().x <= 6.0f 
+    if (this->state.player->get_position().x >= 9.0f && this->state.player->get_position().x <= 9.5f 
         && this->state.player->get_position().y <= 1.0f && this->state.player->get_position().y >= 0.0f) {
         state.next_scene_id = 2;
     }

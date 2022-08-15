@@ -1,4 +1,4 @@
-#define GL_SILENCE_DEPRECATION
+ï»¿#define GL_SILENCE_DEPRECATION
 
 #ifdef _WINDOWS
 #include <GL/glew.h>
@@ -102,11 +102,21 @@ void Entity::activate_ai(Entity* player)
 void Entity::ai_new_walker(Entity* player) {
     switch (ai_state) {
     case IDLE:
-        if (player->get_position().y >= -6.0f) ai_state = WALKING;
+        if (this_level == level2) {// && player->get_position().x <= 0.7f
+            if (player->get_position().y >= -8.5f && player->get_position().x >= 0.4f && player->get_position().x <= 1.0f) ai_state = WALKING;
+        }
+        else if (this_level == level1) {
+            if (player->get_position().y >= -12.0f) ai_state = WALKING;
+        }
         break;
 
     case WALKING:
-        movement = glm::vec3(0.0f, -1.0f, 0.0f);
+        if (this_level == level2) {
+            movement = glm::vec3(0.0f, -1.0f, 0.0f);
+        }
+        else if (this_level == level1) {
+            movement = glm::vec3(1.0f, 0.0f, 0.0f);
+        }
         break;
 
     default:
@@ -153,7 +163,7 @@ void Entity::ai_patroller() {
                 ai_state = WALKING_ANOTHER_WAY;
             }
         }
-        else if (this_level == level3) {
+        else if (this_level == level3 || this_level == level5) {
             if (position.x > 3.0f) {
                 movement = glm::vec3(-1.5f, 0.0f, 0.0f);
             }
@@ -173,7 +183,7 @@ void Entity::ai_patroller() {
                 ai_state = WALKING;
             }
         }
-        else if (this_level == level3) {
+        else if (this_level == level3 || this_level == level5) {
             if (position.x < 1.5f) {
                 movement = glm::vec3(1.5f, 0.0f, 0.0f);
             }
@@ -219,6 +229,9 @@ void Entity::ai_guard(Entity* player)
 void Entity::activate_platform() {
     switch (ai_state) {
 
+    case IDLE:
+        break;
+
     case WALKING:
         if (position.x >= (5.0f)) {
             movement = glm::vec3(-3.0f, 0.0f, 0.0f);
@@ -253,14 +266,12 @@ void Entity::update(float delta_time, Entity* player, Entity* objects, int objec
         collided_left = false;
         collided_right = false;
     }
-
     if (player != nullptr && player->entity_type == ENEMY && objects != nullptr && objects->entity_type != PLAYER) {
         collided_top = false;
         collided_bottom = false;
         collided_left = false;
         collided_right = false;
     }
-
     if (objects == nullptr) {
         collided_top = false;
         collided_bottom = false;
@@ -273,7 +284,6 @@ void Entity::update(float delta_time, Entity* player, Entity* objects, int objec
     collided_left = false;
     collided_right = false;
 
-    // ¿ÉÄÜÒª¸Ä && player->entity_type == PLAYER && player->speed != 0
     if (entity_type == ENEMY) activate_ai(player);
     //else if (entity_type == ENEMY && player->entity_type == ENEMY) activate_ai(player);
 
@@ -303,10 +313,10 @@ void Entity::update(float delta_time, Entity* player, Entity* objects, int objec
 
     // Our character moves from left to right, so they need an initial velocity
     velocity.x = movement.x * speed;
-    if (this_level == level2) {
+    if (this_level == level2 || this_level == level5 || this_level == level1) {
         velocity.y = movement.y * speed;
     }
-   
+
     // Now we add the rest of the gravity physics
     velocity += acceleration * delta_time;
 
@@ -319,7 +329,7 @@ void Entity::update(float delta_time, Entity* player, Entity* objects, int objec
     check_collision_x(map);
 
     // Jump
-    if (this_level != level2) {
+    if (this_level != level2 || this_level != level5 || this_level != level1) {
         if (is_jumping)
         {
             // STEP 1: Immediately return the flag to its original false state
@@ -503,9 +513,9 @@ bool Entity::check_collision(Entity* other)
             collision = other->entity_type;
             collision_enemy = other;
         }
-       // if (entity_type == ENEMY) {
-         //   collision = PLAYER;
-       // }
+        // if (entity_type == ENEMY) {
+          //   collision = PLAYER;
+        // }
     }
 
     return x_distance < 0.0f && y_distance < 0.0f;

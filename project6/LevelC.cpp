@@ -8,35 +8,35 @@ GLuint font_textureiD;
 
 unsigned int LEVELC_DATA[] =
 {
-   30, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   30,80, 0, 0, 0, 0, 0, 0, 0, 0,
    30, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    30,30,48,48,48, 0, 0, 0, 0, 0,
    30,30, 0, 0, 0, 0,48, 0, 0, 0,
    30,30, 0, 0, 0, 0, 0, 0, 0, 0,
    30,30, 0, 0, 0,48, 0, 0, 0, 0,
-   30,30, 0, 0, 0, 0, 0, 0, 0,48,
-   30,30, 0, 0,48, 0, 0,48, 0, 0,
+   30,30, 0, 0, 0, 0, 0, 0, 0, 0,
+   30,30, 0, 0,48, 0, 0, 0, 0, 0,
    30, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    30,30, 0,48, 0, 0, 0, 0, 0, 0,
    30,30, 0, 0, 0,48, 0, 0, 0, 0,
    30,30, 0, 0, 0, 0, 0, 0, 0, 0,
    30, 0, 0, 0,48, 0, 0, 0, 0, 0,
    30,30, 0, 0, 0, 0, 0, 0, 0, 0,
-   30,30, 0,48, 0, 0, 0,48, 0, 0,
-   30, 0, 0, 0, 0,48, 0, 0, 0, 0, 
-   30, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-   30,30,48,48,48, 0, 0, 0, 0, 0, 
+   30,30, 0,48, 0, 0, 0, 0, 0, 0,
+   30, 0, 0, 0, 0,48, 0, 0, 0, 0,
+   30, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   30,30,48,48,48, 0, 0, 0, 0, 0,
    30,30, 0, 0, 0, 0,48, 0, 0, 0,
    30,30, 0, 0, 0, 0, 0, 0, 0, 0,
    30,30, 0, 0, 0,48, 0, 0, 0, 0,
-   30,30, 0, 0, 0, 0, 0, 0, 0,48,
-   30,30, 0, 0,48, 0, 0,48, 0, 0,
+   30,30, 0, 0, 0, 0, 0, 0, 0, 0,
+   30,30, 0, 0,48, 0, 0, 0, 0, 0,
    30, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    30,30, 0,48, 0, 0, 0, 0, 0, 0,
    30,30, 0, 0, 0,48, 0, 0, 0, 0,
    30,30, 0, 0, 0, 0, 0,48, 0, 0,
    30, 0, 0, 0, 48, 0, 0, 0, 0, 0,
-   30,30, 0, 0, 0, 0,48, 0, 0, 0,
+   30,30, 0, 0, 0, 0, 0, 0, 0, 0,
    30,30, 0,48, 0, 0, 0, 0, 0, 0,
    30,30, 9,10, 8, 9,10, 8, 9,10
 };
@@ -102,7 +102,7 @@ void LevelC::initialise()
         state.enemies[i].this_level = level3;
         state.enemies[i].set_ai_type(PATROLLER);
         state.enemies[i].set_ai_state(WALKING);
-        state.enemies[i].speed = 0.8f;
+        state.enemies[i].speed = 0.4f;
     }
     state.enemies[0].set_position(glm::vec3(3.5f, -15.0f, 0.0f));
     state.enemies[1].set_position(glm::vec3(3.5f, 5.0f, 0.0f));
@@ -121,14 +121,16 @@ void LevelC::initialise()
     state.jump_sfx = Mix_LoadWAV("SFX_Jump_01.wav");
 }
 
-void LevelC::update(float delta_time) { 
+void LevelC::update(float delta_time) {
     this->state.player->update(delta_time, state.player, state.enemies, this->ENEMY_COUNT, this->state.map);
     for (int i = 0; i < 2; i++) {
         this->state.enemies[i].update(delta_time, state.player, state.enemies, this->ENEMY_COUNT, this->state.map);
+        this->state.enemies[i].update(delta_time, state.enemies, state.player, 1, this->state.map);
     }
 
     if ((state.player->collision == ENEMY && (state.player->collided_left || state.player->collided_right || state.player->collided_top))
-        || state.player->get_position().y < -29.0f) {
+        || (state.player->get_position().y < -29.0f) || (state.enemies[0].collision == PLAYER && (state.enemies[0].collided_left || state.enemies[0].collided_right || state.enemies[0].collided_bottom))
+        || (state.enemies[1].collision == PLAYER && (state.enemies[1].collided_left || state.enemies[1].collided_right || state.enemies[1].collided_bottom))) {
         if (state.number_of_lives == 0) {
             state.player->set_movement(glm::vec3(0.0f));
             state.player->set_velocity(glm::vec3(0.0f));
@@ -144,8 +146,16 @@ void LevelC::update(float delta_time) {
         }
         state.player->set_position(glm::vec3(2.7f, -25.0f, 0.0f));
         state.player->collision = PLATFORM;
+        state.enemies[0].collision = NONE;
+        state.enemies[1].collision = NONE;
         state.number_of_lives -= 1;
         //state.enemies[0].set_position(glm::vec3(10.0f, 2.0f, 0.0f));
+    }
+
+    if (this->state.player->get_position().x >= 1.7f && this->state.player->get_position().x <= 2.2f && 
+        !state.enemies[0].check_live_status() && !state.enemies[1].check_live_status() &&
+        this->state.player->get_position().y >= -3.9f) {
+        state.next_scene_id = 5;
     }
 }
 
@@ -156,7 +166,7 @@ void LevelC::render(ShaderProgram* program)
     for (int i = 0; i < this->ENEMY_COUNT; ++i) {
         this->state.enemies[i].render(program);
     }
-    
+
     if (state.number_of_lives == 0) {
         Utility::draw_text(program, font_textureiD, "You Lose", 1.0f, -0.6f, glm::vec3(1.5f, -3.0f, 0));
         Utility::draw_text(program, font_textureiD, "You Lose", 1.0f, -0.6f, glm::vec3(1.5f, -10.0f, 0));
@@ -165,13 +175,6 @@ void LevelC::render(ShaderProgram* program)
         state.player->deactivate();
         state.enemies[0].deactivate();
         state.enemies[1].deactivate();
-        return;
-    }
-   
-    if (this->state.enemies[0].check_live_status() == false && this->state.enemies[1].check_live_status() == false) {
-        Utility::draw_text(program, font_textureiD, "You Win", 1.0f, -0.6f, glm::vec3(3.5f, -3.0f, 0));
-        Utility::draw_text(program, font_textureiD, "You Win", 1.0f, -0.6f, glm::vec3(3.5f, -10.0f, 0));
-        Utility::draw_text(program, font_textureiD, "You Win", 1.0f, -0.6f, glm::vec3(3.5f, -20.0f, 0));
         return;
     }
 

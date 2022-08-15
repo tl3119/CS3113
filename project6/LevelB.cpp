@@ -15,6 +15,7 @@ unsigned int LEVELB_DATA[] =
     55,55, 0, 0, 0, 0, 0, 0,55,55,
     55,55, 0, 0, 0, 0, 0, 0,55,55,
     55,55, 0, 0, 0, 0, 0, 0,55,55,
+    80, 0, 0, 0, 0, 0, 0, 0,55,55,
     55,55, 0, 0, 0, 0, 0, 0,55,55,
     55,55, 0, 0, 0, 0, 0, 0,55,55,
     55,55, 0, 0, 0, 0, 0, 0,55,55,
@@ -23,13 +24,12 @@ unsigned int LEVELB_DATA[] =
     55,55, 0, 0, 0, 0, 0, 0,55,55,
     55,55, 0, 0, 0, 0, 0, 0,55,55,
     55,55, 0, 0, 0, 0, 0, 0,55,55,
-    55,55, 0, 0, 0, 0, 0, 0,55,55, 
-    55,55, 0, 0, 0, 0, 0, 0,55,55, 
-    55,55, 0, 0, 0, 0, 0, 0,55,55, 
-    55,55, 0, 0, 0, 0, 0, 0,55,55, 
-    55,55, 0, 0, 0, 0, 0, 0,55,55, 
-    55,55, 0, 0, 0, 0, 0, 0,55,55, 
-    55,55, 0, 0, 0, 0, 0, 0,55,55, 
+    55,55, 0, 0, 0, 0, 0, 0,55,55,
+    55,55, 0, 0, 0, 0, 0, 0,55,55,
+    55,55, 0, 0, 0, 0, 0, 0,55,55,
+    55,55, 0, 0, 0, 0, 0, 0,55,55,
+    55,55, 0, 0, 0, 0, 0, 0,55,55,
+    55,55, 0, 0, 0, 0, 0, 0,55,55,
     80, 0, 0, 0, 0, 0, 0, 0,55,55,
     55,55, 0, 0, 0, 0, 0, 0,55,55
 };
@@ -143,7 +143,7 @@ void LevelB::initialise()
     state.jump_sfx = Mix_LoadWAV("SFX_Jump_01.wav");
 }
 
-void LevelB::update(float delta_time) { 
+void LevelB::update(float delta_time) {
     this->state.player->update(delta_time, state.player, state.enemies, this->ENEMY_COUNT, this->state.map);
     this->state.player->update(delta_time, state.player, state.platforms, this->PLATFORM_COUNT, this->state.map);
     for (int i = 0; i < this->PLATFORM_COUNT; ++i) {
@@ -152,13 +152,13 @@ void LevelB::update(float delta_time) {
     for (int i = 0; i < 2; i++) {
         this->state.enemies[i].update(delta_time, state.player, state.enemies, this->ENEMY_COUNT, this->state.map);
     }
-   // || state.player->collision == PLATFORM  && (state.player->collided_left || state.player->collided_right || state.player->collided_top)
-    //glm::distance(state.enemies[0].get_position(), state.enemies[1].get_position()) == 0.0f
+    // || state.player->collision == PLATFORM  && (state.player->collided_left || state.player->collided_right || state.player->collided_top)
+     //glm::distance(state.enemies[0].get_position(), state.enemies[1].get_position()) == 0.0f
     if (state.enemies[0].collision == ENEMY || state.enemies[1].collision == ENEMY) {
         state.enemies[0].deactivate();
         state.enemies[1].deactivate();
     }
-    
+
     if (state.player->collision == PLATFORM || state.player->collision == ENEMY) {
         if (state.number_of_lives == 0) {
             state.player->set_movement(glm::vec3(0.0f));
@@ -170,7 +170,8 @@ void LevelB::update(float delta_time) {
         state.player->set_position(glm::vec3(3.0f, -20.0f, 0.0f));
         state.player->collision = NONE;
         state.number_of_lives -= 1;
-        //state.enemies[0].set_position(glm::vec3(7.0f, -6.0f, 0.0f));
+        state.enemies[1].set_position(glm::vec3(7.0f, -5.0f, 0.0f));
+        state.enemies[1].set_ai_state(IDLE);
     }
 
     if (this->state.player->get_position().x >= 1.0f && this->state.player->get_position().x <= 1.3f &&
